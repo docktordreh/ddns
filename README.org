@@ -1,13 +1,21 @@
 * ddns
 
+ddns.ts is a tool to update the AAAA-Record of your domain registered on [[https://njal.la][njal.la]].
+
 ** Usage
 
 Requirements:
-- [[deno][https://deno.com/]]
-- [[njal.la][https://njal.la]] as domain registrar
+- [[https://deno.com/][deno]]
+- [[https://njal.la][njal.la]] as domain registrar
 
 The API key and the domain you wish to update are read from the environment variables, meaning you can run the program as follows:
 
 #+begin_src sh
 DDNS_DOMAIN=example.com DDNS_API_KEY=example ./ddns.ts
+#+end_src
+
+For example in a crontab:
+
+#+begin_src sh
+*/1 * * * * PATH=$PATH:/root/.deno/bin DDNS_DOMAIN=example.com DDNS_API_KEY=apikey /usr/local/bin/ddns.ts >> /var/log/ddns_domain.com 2>&1
 #+end_src
