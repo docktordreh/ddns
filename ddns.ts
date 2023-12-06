@@ -10,7 +10,7 @@ const domainParts = domain.split(".");
 const domainRoot = domainParts.slice(-2).join(".");
 const domainName = domainParts.slice(0,-2).join(".") || "@";
 
-const pub_ip_provider = "https://api64.ipify.org?format=json"
+const pub_ip_provider = "https://api6.ipify.org?format=json"
 
 let pub_ip = await fetch(pub_ip_provider)
 if (!pub_ip.ok) {
@@ -25,4 +25,4 @@ if (pub_ip === record_ip) {
 }
 console.log(`updating record ip. record: ${record_ip} !== public: ${pub_ip}`)
 await dns.update(domain, records.find((r) => r.type === 'AAAA'), {content: pub_ip})
-console.log(`updated A-record for ${domain} to ${pub_ip}`)
+console.log(`updated AAAA-record for ${domain} to ${pub_ip}`)
