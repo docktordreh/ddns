@@ -1,1 +1,13 @@
 * ddns
+
+** Usage
+
+Requirements:
+- [[deno][https://deno.com/]]
+- [[njal.la][https://njal.la]] as domain registrar
+
+The API key and the domain you wish to update are read from the environment variables, meaning you can run the program as follows:
+
+```sh
+DDNS_DOMAIN=example.com DDNS_API_KEY=example ./ddns.js
+```
