@@ -1,6 +1,6 @@
 * ddns
 
-ddns.ts is a tool to update the =A=/=AAAA=-Record of your domain registered on [[https://njal.la][njal.la]].
+ddns.ts is a tool to update the =A= / =AAAA=-Record of your domain registered on [[https://njal.la][njal.la]].
 The goal is to be able to access a service in your home network when your network provider doesn't have enough ipv4 adresses and uses DSLite.
 I am aware of existing DynDNS Providers, but i wished for a open solution usable without relying on <insert some service here>.
 
