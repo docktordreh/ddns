@@ -52,8 +52,8 @@ After=network-online.target
 [Service]
 ExecStart=socat -d -d TCP4-LISTEN:%i,fork TCP6:DOMAIN:%i
 Type=simple
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 Restart=always
 
 [Install]
