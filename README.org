@@ -1,21 +1,67 @@
 * ddns
 
-ddns.ts is a tool to update the AAAA-Record of your domain registered on [[https://njal.la][njal.la]].
+ddns.ts is a tool to update the =A=/=AAAA=-Record of your domain registered on [[https://njal.la][njal.la]].
+The goal is to be able to access a service in your home network when your network provider doesn't have enough ipv4 adresses and uses DSLite.
+I am aware of existing DynDNS Providers, but i wished for a open solution usable without relying on <insert some service here>.
 
 ** Usage
 
 Requirements:
 - [[https://deno.com/][deno]]
-- [[https://njal.la][njal.la]] as domain registrar
+- a domain with [[https://njal.la][njal.la]] as domain registrar
 
 The API key and the domain you wish to update are read from the environment variables, meaning you can run the program as follows:
 
 #+begin_src sh
-DDNS_IPVX=4 DDNS_DOMAIN=example.com DDNS_API_KEY=example ./ddns.ts
+DDNS_DOMAIN=example.com DDNS_API_KEY=example ./ddns.ts
 #+end_src
+
+Additionally, if you wish to change the =A=-record instead of the =AAAA=-record, you can set =DDNS_IPVX=4= as environment variable (defaults to 6).
 
 For example in a crontab:
 
 #+begin_src sh
 */1 * * * * PATH=$PATH:/root/.deno/bin DDNS_DOMAIN=example.com DDNS_API_KEY=apikey /usr/local/bin/ddns.ts >> /var/log/ddns_domain.com 2>&1
+#+end_src
+
+Note that this doesn't yet support creation of records and relies on there being records to edit, meaning you'll have to create them initially.
+
+** Making your homelab reachable via ipv6
+
+When doing the following, keep in mind that this opens up a potential attack vector. Proceed with care.
+
+- Open the ports to your services: By default your router should block access from outside. Make sure to create port forwarding rules for ipv6 going to your host, in this example I'll use the name =proxy=.
+- =proxy= will now be reachable via its ipv6 address. To check if it works, get the ipv6 adress of =proxy= using =curl -6 api6.ipify.org= and afterwards do a =curl [IPV6_ADDRESS]:PORT=. You should see whatever your service provides, e.g. a basic website.
+- create a =AAAA=-record on [[https://njal.la][njal.la]]
+- setup the crontab as described in [[Usage]]
+
+** Making your homelab reachable via ipv4
+
+After [[Making your homelab reachable via ipv6]], your homelab won't be reachable in networks where ipv6 isn't supported.
+To change that, you can use a machine which is reachable via ipv4 (still necessary, sadly) to forward ipv4 requests to ipv6. It doesn't have to have a fixed ipv4 address, as you can again use the script to modify your =A=-record. This machine will be called =4to6=.
+Make sure to achieve the following:
+- [[Making your homelab reachable via ipv6][your =proxy= is reachable via ipv6]]
+- your =4to6= is reachable via your domain using ipv4 (check e.g. by installing apache temporarily on =4to6= or [[https://jameshfisher.com/2018/12/31/how-to-make-a-webserver-with-netcat-nc/][check using netcat]])
+
+Then, on =4to6=,  install socat and create the following service under =/etc/systemd/system/4to6@.service= (and change =DOMAIN= to your domain):
+#+begin_src
+[Unit]
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=socat -d -d TCP4-LISTEN:%i,fork TCP6:DOMAIN:%i
+Type=simple
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+#+end_src
+
+This creates a service file to which you can pass /arguments/. For example, to enable forwarding from ipv4 to ipv6 for port 443, do the following:
+#+begin_src shell
+systemctl enable 4to6@443
+systemctl start 4to6@443
 #+end_src
