@@ -2,7 +2,7 @@
 
 import njalla from "npm:njalla-dns@2.0.3";
 
-const ip_ver = Deno.env.get("DDNS_IPVX") ? Deno.env.get("DDNS_IPVX") : "4";
+const ip_ver = Deno.env.get("DDNS_IPVX") ? Deno.env.get("DDNS_IPVX") : "6";
 const record_type = ip_ver == "4" ? "A" : "AAAA";
 const domain = Deno.env.get("DDNS_DOMAIN");
 const dns = njalla(Deno.env.get("DDNS_API_KEY"));
