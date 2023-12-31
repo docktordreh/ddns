@@ -33,7 +33,7 @@ When doing the following, keep in mind that this opens up a potential attack vec
 - Open the ports to your services: By default your router should block access from outside. Make sure to create port forwarding rules for ipv6 going to your host, in this example I'll use the name =proxy=.
 - =proxy= will now be reachable via its ipv6 address. To check if it works, get the ipv6 adress of =proxy= using =curl -6 api6.ipify.org= and afterwards do a =curl [IPV6_ADDRESS]:PORT=. You should see whatever your service provides, e.g. a basic website.
 - create a =AAAA=-record on [[https://njal.la][njal.la]]
-- setup the crontab as described in [[Usage]]
+- setup the crontab on =proxy= as described in [[Usage]]
 
 ** Making your homelab reachable via ipv4
 
